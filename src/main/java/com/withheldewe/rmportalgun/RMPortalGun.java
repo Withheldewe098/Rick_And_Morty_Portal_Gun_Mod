@@ -1,6 +1,9 @@
 package com.withheldewe.rmportalgun;
 
 import com.mojang.logging.LogUtils;
+import com.withheldewe.rmportalgun.item.ModItems;
+import net.minecraft.world.item.CreativeModeTab;
+import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.BuildCreativeModeTabContentsEvent;
@@ -26,11 +29,10 @@ public class RMPortalGun {
         IEventBus modEventBus = context.getModEventBus();
         // Register the commonSetup method for modloading
         modEventBus.addListener(this::commonSetup);
-
         // Register ourselves for server and other game events we are interested in
         MinecraftForge.EVENT_BUS.register(this);
 
-
+        ModItems.register(modEventBus);
 
         // Register the item to a creative tab
         modEventBus.addListener(this::addCreative);
@@ -44,7 +46,10 @@ public class RMPortalGun {
 
     // Add the example block item to the building blocks tab
     private void addCreative(BuildCreativeModeTabContentsEvent event)    {
-
+        if(event.getTabKey() == CreativeModeTabs.TOOLS_AND_UTILITIES) {
+            event.accept(ModItems.Portal_Gun);
+            event.accept(ModItems.MK1_Portal_Gun);
+        }
     }
 
     // You can use SubscribeEvent and let the Event Bus discover methods to call
