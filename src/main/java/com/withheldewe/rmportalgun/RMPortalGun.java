@@ -3,7 +3,7 @@ package com.withheldewe.rmportalgun;
 import com.mojang.logging.LogUtils;
 import com.withheldewe.rmportalgun.item.ModCreativeModeTabs;
 import com.withheldewe.rmportalgun.item.ModItems;
-import net.minecraft.world.item.CreativeModeTab;
+import com.withheldewe.rmportalgun.item.client.PortalGunFirstPersonHandler;
 import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
@@ -21,51 +21,58 @@ import org.slf4j.Logger;
 // The value here should match an entry in the META-INF/mods.toml file
 @Mod(RMPortalGun.MOD_ID)
 public class RMPortalGun {
-    // Define mod id in a common place for everything to reference
+
+    // Mod ID
     public static final String MOD_ID = "rmportalgun";
-    // Directly reference a slf4j logger
     public static final Logger LOGGER = LogUtils.getLogger();
 
-    public RMPortalGun(FMLJavaModLoadingContext context)    {
+    public RMPortalGun(FMLJavaModLoadingContext context) {
         IEventBus modEventBus = context.getModEventBus();
-        // Register the commonSetup method for modloading
-        modEventBus.addListener(this::commonSetup);
-        // Register ourselves for server and other game events we are interested in
-        MinecraftForge.EVENT_BUS.register(this);
 
+        // Common setup
+        modEventBus.addListener(this::commonSetup);
+
+        // Register creative tabs
         ModCreativeModeTabs.register(modEventBus);
 
+        // Register items
         ModItems.register(modEventBus);
 
-        // Register the item to a creative tab
+        // Add creative tab contents
         modEventBus.addListener(this::addCreative);
-        // Register our mod's ForgeConfigSpec so that Forge can create and load the config file for us
+
+        // Register config
         context.registerConfig(ModConfig.Type.COMMON, Config.SPEC);
+
+        // Register this mod to Forge event bus
+        MinecraftForge.EVENT_BUS.register(this);
     }
 
-    private void commonSetup(final FMLCommonSetupEvent event)    {
-
+    private void commonSetup(final FMLCommonSetupEvent event) {
+        LOGGER.info("Common setup complete for RM Portal Gun mod.");
     }
 
-    // Add the example block item to the building blocks tab
-    private void addCreative(BuildCreativeModeTabContentsEvent event)    {
-        if(event.getTabKey() == CreativeModeTabs.TOOLS_AND_UTILITIES) {
-
+    private void addCreative(BuildCreativeModeTabContentsEvent event) {
+        if (event.getTabKey() == CreativeModeTabs.TOOLS_AND_UTILITIES) {
+            // Add extra items to vanilla creative tab if desired
         }
     }
 
-    // You can use SubscribeEvent and let the Event Bus discover methods to call
     @SubscribeEvent
     public void onServerStarting(ServerStartingEvent event) {
-
+        LOGGER.info("Server starting with RM Portal Gun mod.");
     }
 
-    // You can use EventBusSubscriber to automatically register all static methods in the class annotated with @SubscribeEvent
+    // Client-side events
     @Mod.EventBusSubscriber(modid = MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
     public static class ClientModEvents {
+
         @SubscribeEvent
         public static void onClientSetup(FMLClientSetupEvent event) {
+            LOGGER.info("Client setup complete for RM Portal Gun mod.");
 
+            // ✅ Explicitly register PortalGunFirstPersonHandler to event bus
+            MinecraftForge.EVENT_BUS.register(PortalGunFirstPersonHandler.class);
         }
     }
 }
