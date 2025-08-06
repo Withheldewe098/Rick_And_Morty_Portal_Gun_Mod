@@ -1,4 +1,9 @@
 {
   "item.rmportalgun.portalgun": "Portal Gun",
-  "item.rmportalgun.mkoneportalgun": "MK 1 Portal Gun"
+  "item.rmportalgun.mkoneportalgun": "MK 1 Portal Gun",
+  "item.rmportalgun.mktwoportalgun": "MK 2 Portal Gun",
+  "item.rmportalgun.mkthreeportalgun": "MK 3 Portal Gun",
+
+  "creativetab.rmportalgun.ricks_portalgun_items": "RM Portal Gun Items",
+  "creativetab.rmportalgun.ricks_portalgun_blocks": "RM Portal Gun Blocks"
 }

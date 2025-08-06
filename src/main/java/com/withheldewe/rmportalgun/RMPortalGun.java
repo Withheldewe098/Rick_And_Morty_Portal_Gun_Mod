@@ -1,6 +1,7 @@
 package com.withheldewe.rmportalgun;
 
 import com.mojang.logging.LogUtils;
+import com.withheldewe.rmportalgun.item.ModCreativeModeTabs;
 import com.withheldewe.rmportalgun.item.ModItems;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.CreativeModeTabs;
@@ -32,6 +33,8 @@ public class RMPortalGun {
         // Register ourselves for server and other game events we are interested in
         MinecraftForge.EVENT_BUS.register(this);
 
+        ModCreativeModeTabs.register(modEventBus);
+
         ModItems.register(modEventBus);
 
         // Register the item to a creative tab
@@ -47,8 +50,7 @@ public class RMPortalGun {
     // Add the example block item to the building blocks tab
     private void addCreative(BuildCreativeModeTabContentsEvent event)    {
         if(event.getTabKey() == CreativeModeTabs.TOOLS_AND_UTILITIES) {
-            event.accept(ModItems.Portal_Gun);
-            event.accept(ModItems.MK1_Portal_Gun);
+
         }
     }
 

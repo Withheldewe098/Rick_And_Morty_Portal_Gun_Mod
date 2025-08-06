@@ -15,6 +15,10 @@ public class ModItems {
             () -> new Item(new Item.Properties()));
     public static final RegistryObject<Item> MK1_Portal_Gun = ITEMS.register("mkoneportalgun",
             () -> new Item(new Item.Properties()));
+    public static final RegistryObject<Item> MK2_Portal_Gun = ITEMS.register("mktwoportalgun",
+            () -> new Item(new Item.Properties()));
+    public static final RegistryObject<Item> MK3_Portal_Gun = ITEMS.register("mkthreeportalgun",
+            () -> new Item(new Item.Properties()));
 
     public static void register(IEventBus eventBus) {
         ITEMS.register(eventBus);
