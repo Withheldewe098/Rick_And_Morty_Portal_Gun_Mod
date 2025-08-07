@@ -11,7 +11,7 @@ public class ModItems {
     public static final DeferredRegister<Item> ITEMS =
             DeferredRegister.create(ForgeRegistries.ITEMS, RMPortalGun.MOD_ID);
 
-    public static final RegistryObject<Item> Portal_Gun = ITEMS.register("portal_gun",
+    public static final RegistryObject<Item> Portal_Gun = ITEMS.register("portalgun",
             () -> new PortalGunItem(new Item.Properties()));
 
     public static final RegistryObject<Item> MK1_Portal_Gun = ITEMS.register("mkoneportalgun",

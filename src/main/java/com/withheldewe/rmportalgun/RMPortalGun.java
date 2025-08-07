@@ -3,7 +3,6 @@ package com.withheldewe.rmportalgun;
 import com.mojang.logging.LogUtils;
 import com.withheldewe.rmportalgun.item.ModCreativeModeTabs;
 import com.withheldewe.rmportalgun.item.ModItems;
-import com.withheldewe.rmportalgun.item.client.PortalGunFirstPersonHandler;
 import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
@@ -70,9 +69,6 @@ public class RMPortalGun {
         @SubscribeEvent
         public static void onClientSetup(FMLClientSetupEvent event) {
             LOGGER.info("Client setup complete for RM Portal Gun mod.");
-
-            // ✅ Explicitly register PortalGunFirstPersonHandler to event bus
-            MinecraftForge.EVENT_BUS.register(PortalGunFirstPersonHandler.class);
         }
     }
 }
