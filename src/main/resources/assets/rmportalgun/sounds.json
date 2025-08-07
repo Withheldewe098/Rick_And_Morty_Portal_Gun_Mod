@@ -1,0 +1,7 @@
+{
+  "portal_shoot": {
+    "sounds": [
+      { "name": "rmportalgun:portal_shoot", "stream": false }
+    ]
+  }
+}

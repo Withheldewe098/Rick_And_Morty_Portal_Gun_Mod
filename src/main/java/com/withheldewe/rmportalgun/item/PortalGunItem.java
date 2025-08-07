@@ -1,60 +1,82 @@
 package com.withheldewe.rmportalgun.item;
 
-import net.minecraft.nbt.CompoundTag;
+import org.joml.Vector3f;
+import com.withheldewe.rmportalgun.PortalManager;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.component.CustomData;
-import net.minecraft.core.component.DataComponents;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.Vec3;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.particle.Particle;
+import net.minecraft.client.particle.ParticleEngine;
 
 public class PortalGunItem extends Item {
-
-    // Longer recoil animation duration
-    private static final int RECOIL_TICKS = 15;
-
     public PortalGunItem(Properties properties) {
         super(properties);
     }
 
     @Override
-    public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
+    public InteractionResultHolder<ItemStack> use(Level world, Player player, InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);
 
-        if (level.isClientSide) {
-            CompoundTag tag = getOrCreateCustomTag(stack);
-            tag.putInt("RecoilTicks", RECOIL_TICKS);
-            stack.set(DataComponents.CUSTOM_DATA, CustomData.of(tag));
-        }
+        // client‐only: spawn the 5 dust particles
+        if (world.isClientSide) {
+            Vec3 look = player.getLookAngle().normalize();
+            double px = player.getX() + look.x * 0.5;
+            double py = player.getEyeY() + look.y * 0.5;
+            double pz = player.getZ() + look.z * 0.5;
 
-        return InteractionResultHolder.success(stack);
-    }
+            DustParticleOptions dustOpts = new DustParticleOptions(
+                    new Vector3f(0f, 1f, 0f),  // green
+                    1.0f                        // size
+            );
 
-    public static int getRecoilTicks(ItemStack stack) {
-        CustomData data = stack.get(DataComponents.CUSTOM_DATA);
-        if (data != null) {
-            CompoundTag tag = data.copyTag();
-            return tag.getInt("RecoilTicks");
-        }
-        return 0;
-    }
+            ParticleEngine engine = Minecraft.getInstance().particleEngine;
+            int segments = 5;
+            double spacing = 0.8;
+            double xOffset = -0.2, yOffset = -0.2;
 
-    public static void tickRecoil(ItemStack stack) {
-        CustomData data = stack.get(DataComponents.CUSTOM_DATA);
-        if (data != null) {
-            CompoundTag tag = data.copyTag();
-            int ticks = tag.getInt("RecoilTicks");
-            if (ticks > 0) {
-                tag.putInt("RecoilTicks", ticks - 1);
-                stack.set(DataComponents.CUSTOM_DATA, CustomData.of(tag));
+            for (int i = 0; i < segments; i++) {
+                double x = px + look.x * spacing * i + xOffset;
+                double y = py + look.y * spacing * i + yOffset;
+                double z = pz + look.z * spacing * i;
+
+                Particle p = engine.createParticle(dustOpts, x, y, z, 0, 0, 0);
+                if (p != null) {
+                    p.setLifetime(1);
+                }
             }
         }
-    }
 
-    private static CompoundTag getOrCreateCustomTag(ItemStack stack) {
-        CustomData data = stack.get(DataComponents.CUSTOM_DATA);
-        return data != null ? data.copyTag() : new CompoundTag();
+        // server-only: actually spawn + schedule portal removal
+        else {
+            Vec3 look = player.getLookAngle().normalize();
+            double px = player.getX() + look.x * 0.5;
+            double py = player.getEyeY() + look.y * 0.5;
+            double pz = player.getZ() + look.z * 0.5;
+
+            int segments = 5;
+            double spacing = 0.8;
+
+            // calculate end-point of the stream
+            double tx = px + look.x * spacing * (segments - 1);
+            double ty = py + look.y * spacing * (segments - 1);
+            double tz = pz + look.z * spacing * (segments - 1);
+
+            BlockPos target = new BlockPos(
+                    (int)Math.floor(tx),
+                    (int)Math.floor(ty),
+                    (int)Math.floor(tz)
+            );
+
+            PortalManager.spawnPortal(world, target, look);
+        }
+
+        return InteractionResultHolder.consume(stack);
     }
 }

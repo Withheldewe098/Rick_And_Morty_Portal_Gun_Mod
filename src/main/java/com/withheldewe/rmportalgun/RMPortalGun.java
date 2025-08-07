@@ -17,33 +17,30 @@ import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.slf4j.Logger;
 
-// The value here should match an entry in the META-INF/mods.toml file
+// The value here should match an entry in your META-INF/mods.toml
 @Mod(RMPortalGun.MOD_ID)
 public class RMPortalGun {
-
-    // Mod ID
     public static final String MOD_ID = "rmportalgun";
     public static final Logger LOGGER = LogUtils.getLogger();
 
-    public RMPortalGun(FMLJavaModLoadingContext context) {
-        IEventBus modEventBus = context.getModEventBus();
+    public RMPortalGun() {
+        IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
 
-        // Common setup
-        modEventBus.addListener(this::commonSetup);
+        // **NEW** register our custom sounds
+        ModSounds.register(modEventBus);
 
-        // Register creative tabs
+        // register your items and tabs
+        ModItems.register(modEventBus);
         ModCreativeModeTabs.register(modEventBus);
 
-        // Register items
-        ModItems.register(modEventBus);
-
-        // Add creative tab contents
+        // common setup listener
+        modEventBus.addListener(this::commonSetup);
+        // creative tab contents
         modEventBus.addListener(this::addCreative);
+        // config
+        FMLJavaModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, Config.SPEC);
 
-        // Register config
-        context.registerConfig(ModConfig.Type.COMMON, Config.SPEC);
-
-        // Register this mod to Forge event bus
+        // register server-side events
         MinecraftForge.EVENT_BUS.register(this);
     }
 
@@ -51,24 +48,23 @@ public class RMPortalGun {
         LOGGER.info("Common setup complete for RM Portal Gun mod.");
     }
 
-    private void addCreative(BuildCreativeModeTabContentsEvent event) {
+    private void addCreative(final BuildCreativeModeTabContentsEvent event) {
         if (event.getTabKey() == CreativeModeTabs.TOOLS_AND_UTILITIES) {
-            // Add extra items to vanilla creative tab if desired
+            // add to vanilla tab if desired
         }
     }
 
     @SubscribeEvent
-    public void onServerStarting(ServerStartingEvent event) {
+    public void onServerStarting(final ServerStartingEvent event) {
         LOGGER.info("Server starting with RM Portal Gun mod.");
     }
 
-    // Client-side events
     @Mod.EventBusSubscriber(modid = MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
     public static class ClientModEvents {
-
         @SubscribeEvent
-        public static void onClientSetup(FMLClientSetupEvent event) {
+        public static void onClientSetup(final FMLClientSetupEvent event) {
             LOGGER.info("Client setup complete for RM Portal Gun mod.");
+            // register renderers or other client-only setup here
         }
     }
 }
